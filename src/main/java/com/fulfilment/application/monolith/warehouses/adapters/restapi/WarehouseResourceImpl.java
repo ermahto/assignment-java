@@ -12,9 +12,12 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.WebApplicationException;
 import java.util.List;
+import org.jboss.logging.Logger;
 
 @RequestScoped
 public class WarehouseResourceImpl implements WarehouseResource {
+
+  private static final Logger LOG = Logger.getLogger(WarehouseResourceImpl.class);
 
   @Inject private WarehouseRepository warehouseRepository;
   @Inject private CreateWarehouseOperation createWarehouseOperation;
@@ -39,10 +42,11 @@ public class WarehouseResourceImpl implements WarehouseResource {
     try {
       // Create warehouse through use case (includes validations)
       createWarehouseOperation.create(domainWarehouse);
-      
+      LOG.infof("REST create warehouse accepted businessUnitCode=%s", domainWarehouse.businessUnitCode);
       // Return the created warehouse
       return toWarehouseResponse(domainWarehouse);
     } catch (IllegalArgumentException e) {
+      LOG.warnf("REST create warehouse rejected: %s", e.getMessage());
       throw new WebApplicationException(e.getMessage(), 400);
     }
   }
@@ -53,6 +57,7 @@ public class WarehouseResourceImpl implements WarehouseResource {
     var domainWarehouse = warehouseRepository.findByBusinessUnitCode(id);
     
     if (domainWarehouse == null) {
+      LOG.warnf("REST get warehouse not found businessUnitCode=%s", id);
       throw new WebApplicationException("Warehouse with business unit code '" + id + "' not found", 404);
     }
     
@@ -66,13 +71,16 @@ public class WarehouseResourceImpl implements WarehouseResource {
     var domainWarehouse = warehouseRepository.findByBusinessUnitCode(id);
 
     if (domainWarehouse == null) {
+      LOG.warnf("REST archive warehouse not found businessUnitCode=%s", id);
       throw new WebApplicationException("Warehouse with business unit code '" + id + "' not found", 404);
     }
 
     try {
       // Archive warehouse through use case (includes validations)
       archiveWarehouseOperation.archive(domainWarehouse);
+      LOG.infof("REST archive warehouse accepted businessUnitCode=%s", id);
     } catch (IllegalArgumentException e) {
+      LOG.warnf("REST archive warehouse rejected: %s", e.getMessage());
       throw new WebApplicationException(e.getMessage(), 400);
     }
   }
@@ -91,11 +99,13 @@ public class WarehouseResourceImpl implements WarehouseResource {
     try {
       // Replace warehouse through use case (includes validations)
       replaceWarehouseOperation.replace(domainWarehouse);
+      LOG.infof("REST replace warehouse accepted businessUnitCode=%s", businessUnitCode);
 
       // Return the updated warehouse
       var updated = warehouseRepository.findByBusinessUnitCode(businessUnitCode);
       return toWarehouseResponse(updated);
     } catch (IllegalArgumentException e) {
+      LOG.warnf("REST replace warehouse rejected: %s", e.getMessage());
       throw new WebApplicationException(e.getMessage(), 400);
     }
   }

@@ -8,9 +8,12 @@ import com.fulfilment.application.monolith.warehouses.domain.ports.WarehouseStor
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import jakarta.transaction.Transactional.TxType;
+import org.jboss.logging.Logger;
 
 @ApplicationScoped
 public class CreateWarehouseUseCase implements CreateWarehouseOperation {
+
+  private static final Logger LOG = Logger.getLogger(CreateWarehouseUseCase.class);
 
   private final WarehouseStore warehouseStore;
   private final LocationResolver locationResolver;
@@ -57,5 +60,8 @@ public class CreateWarehouseUseCase implements CreateWarehouseOperation {
 
     // All validations passed, create the warehouse
     warehouseStore.create(warehouse);
+    LOG.infof(
+        "Created warehouse businessUnitCode=%s location=%s capacity=%d stock=%d",
+        warehouse.businessUnitCode, warehouse.location, warehouse.capacity, warehouse.stock);
   }
 }

@@ -6,9 +6,12 @@ import com.fulfilment.application.monolith.warehouses.domain.ports.LocationResol
 import com.fulfilment.application.monolith.warehouses.domain.ports.ReplaceWarehouseOperation;
 import com.fulfilment.application.monolith.warehouses.domain.ports.WarehouseStore;
 import jakarta.enterprise.context.ApplicationScoped;
+import org.jboss.logging.Logger;
 
 @ApplicationScoped
 public class ReplaceWarehouseUseCase implements ReplaceWarehouseOperation {
+
+  private static final Logger LOG = Logger.getLogger(ReplaceWarehouseUseCase.class);
 
   private final WarehouseStore warehouseStore;
   private final LocationResolver locationResolver;
@@ -62,5 +65,8 @@ public class ReplaceWarehouseUseCase implements ReplaceWarehouseOperation {
 
     // Update the warehouse
     warehouseStore.update(existing);
+    LOG.infof(
+        "Replaced warehouse businessUnitCode=%s location=%s capacity=%d stock=%d",
+        existing.businessUnitCode, existing.location, existing.capacity, existing.stock);
   }
 }

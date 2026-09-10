@@ -32,6 +32,7 @@ public class WarehouseRepository implements WarehouseStore, PanacheRepository<Db
     dbWarehouse.archivedAt = warehouse.archivedAt;
     
     this.persist(dbWarehouse);
+    LOG.infof("Persisted warehouse businessUnitCode=%s", dbWarehouse.businessUnitCode);
   }
 
   @Override

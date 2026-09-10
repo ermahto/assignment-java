@@ -188,15 +188,16 @@
                         </goals>
                         <configuration>
                             <dataFile>${project.build.directory}/jacoco-quarkus.exec</dataFile>
-                            <!-- Assignment point 3: JaCoCo + >=80% line coverage on the enforced bundle below. -->
-                            <!-- HTML report "Total" still includes stores/products/etc.; this gate matches CODE_ASSIGNMENT scope. -->
-                            <includes>
-                                <include>com/fulfilment/application/monolith/warehouses/**</include>
-                            </includes>
+                            <!-- Require project Total (HTML) >= 80% instructions and lines. -->
                             <rules>
                                 <rule>
                                     <element>BUNDLE</element>
                                     <limits>
+                                        <limit>
+                                            <counter>INSTRUCTION</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.80</minimum>
+                                        </limit>
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>COVEREDRATIO</value>

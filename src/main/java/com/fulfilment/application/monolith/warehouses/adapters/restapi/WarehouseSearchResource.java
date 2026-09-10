@@ -51,6 +51,10 @@ public class WarehouseSearchResource {
         warehouseRepository.searchActiveWarehouses(
             location, minCapacity, maxCapacity, sortField, descending, pageIndex, size);
 
+    LOG.infof(
+        "warehouse search returned total=%d page=%d pageSize=%d",
+        result.totalCount(), result.page(), result.pageSize());
+
     List<Warehouse> apiItems = result.items().stream().map(this::toApiWarehouse).toList();
     return new WarehouseSearchPageResponse(apiItems, result.totalCount(), result.page(), result.pageSize());
   }
